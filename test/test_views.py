@@ -3,16 +3,16 @@ from hello_world import app
 from hello_world.formater import SUPPORTED
 
 
-class FlaskrTestCase(unittest.TestCase):
+class FlaskTestCase(unittest.TestCase):
     def setUp(self):
         app.config['TESTING'] = True
         self.app = app.test_client()
 
     def test_outputs(self):
         rv = self.app.get('/outputs')
-        s = str(rv.data)
-        ','.join(SUPPORTED) in s
+        for s in SUPPORTED:
+            self.assertIn(s.encode(), rv.data)
 
-    def test_msg_with_output(self):
+    def test_msg_with_output_json(self):
         rv = self.app.get('/?output=json')
-        self.assertEqual(b'{ "imie":"Ivo", "mgs":Hello World!"}', rv.data)
+        self.assertEqual(b'{ "imie":"Ivo", "msg":"Hello World!"}', rv.data)
