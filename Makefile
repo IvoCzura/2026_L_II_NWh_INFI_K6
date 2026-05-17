@@ -7,4 +7,20 @@ run:
 	python main.py
 .PHONY: test
 test:
-	PYTHONPATH=. py.test --verbose -s
+	PYTHONPATH=. py.test
+
+TAG=$(USERNAME)/hello-world-printer-k6-2026
+docker_build:
+	docker build -t hello-world-printer-k6-2026 .
+
+docker_run: docker_build
+	docker run \
+		--name hello-world-printer-dev \
+		-p 5000:5000 \
+		-d hello-world-printer-k6-2026
+
+docker_push: docker_build
+	@docker login --username $(USERNAME) --password $${DOCKER_PASSWORD}; \
+	docker tag hello-world-printer-k6-2026 $(TAG); \
+	docker push $(TAG); \
+	docker logout;
